@@ -28,9 +28,15 @@ export default {
       .split(']').join('')
       .split('Array').join('')
       .split('items:').join('')
+      .split('earned').join(',earned')
+      .split('spent').join(',spent')
+      .split('current').join(',current')
+      .split('}').join('},')
       .split('=&gt;').join(':');
 
       this.data = this.data.split(this.data.split('{')[0]).join('');
+
+      console.log(this.data);
 
     })
   }
