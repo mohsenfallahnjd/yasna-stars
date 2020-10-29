@@ -1,29 +1,53 @@
 <template>
   <div id="app">
-    <input type="text" v-model="search">
-    <template v-for="(item, index) in filteredList">
-      <div class="person" :key="index">
-        <h3>{{ item.full_name }}</h3>
-        <span>{{`کسب کرده: ${item.earned}`}}</span>
-        <span>{{`خرج کرده: ${item.spent}`}}</span>
-        <span>{{`موجودی: ${item.current}`}}</span>
-      </div>
-    </template>
+    <c-loading :active="$wait.is('loading-page')" />
+
+    <div class="container">
+
+        <div id="logo">
+            <img src="@/assets/images/yasnateam-logo.png" alt="yasnateam-logo">
+        </div>
+
+        <b-form-input type="text" v-model="search" placeholder="جستوجو کنید :)" />
+
+        <div class="error" v-html="error" v-if="error" />
+
+        <div class="person-list" v-else>
+          <template v-for="(item, index) in filteredList">
+            <c-person :content="item" :key="index" />
+          </template>
+        </div>
+
+
+    </div>
+
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import CPerson from '@/components/Person';
+import CLoading from '@/components/Loading';
 
 export default {
   name: 'App',
 
+  components: {
+    CPerson,
+    CLoading,
+  },
+
   data:() => ({
-    obj: {},
-    data: '',
-    search:'',
-    persons:[]
+    obj:      {},
+    data:     '',
+    search:   '',
+    persons:  [],
+    error:    null,
   }),
+
+    beforeCreate() {
+        this.$wait.start('loading-page');
+    },
 
   computed:{
     filteredList() {
@@ -37,7 +61,6 @@ export default {
     axios.get('https://yasna.team/manage/rewards/stars')
     .then((res) => {
       this.obj = res.data;
-    }).finally(() => {
       this.data = String(this.obj).split('>')[1]
       .split('<')[0]
       .split('(').join('{')
@@ -82,6 +105,12 @@ export default {
       for (let index = 0; index < nameArray.length; index++) {
         this.persons.push(this.data[index]);
       }
+    }).catch((err) => {
+      this.error = err;
+      console.log(err);
+    })
+    .finally(() => {
+      this.$wait.end('loading-page');
     })
   },
 }
@@ -89,17 +118,68 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  min-height:   100vh;
+  background:   url(./assets/images/bg.png) 50% repeat;
+  text-align:   center;
+  padding:      40px 3rem;
+  overflow:     hidden;
 
-  .person {
-    margin: 10px 0;
-    span {
-      padding: 5px 8px;
+  .container {
+    max-width: 400px;
+  }
+
+  #logo {
+    margin-bottom: 30px;
+    width:        100%;
+    img {
+      max-height: 120px;
+    }
+  }
+
+  .form-control {
+    direction:        rtl;
+    margin-bottom:    30px;
+    padding:          .85714rem 1.42857rem;
+    border:           2px solid #f5f5f5;
+    border-radius:    4px;
+    background-color: #fff;
+    box-shadow:       none;
+    transition:       all .2s ease-in-out;
+    display:          flex;
+    height:           50px;
+    width:            100%;
+    max-width:        100%;
+    position:         relative;
+    font-weight:      500;
+    font-size:        .85714rem;
+    font-family:      inherit;
+    line-height:      inherit;
+    color:          #000;
+    outline:          0;
+    
+    &:focus {
+      box-shadow:   none;
+      border-color: #1875f0;
+    }
+  }
+
+  .person-list {
+    height:           60vh;
+    overflow:         auto;
+    scroll-behavior:  smooth;
+
+    &::-webkit-scrollbar {
+      width: 9px;
+    }
+
+    &::-webkit-scrollbar-track {
+      border-radius:    5px;
+      background-color: darken(#fafafa, 10%)
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius:    5px;
+      background-color: #85929e;
     }
   }
 }

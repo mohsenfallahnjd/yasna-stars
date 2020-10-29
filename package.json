@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.0",
+    "bootstrap-vue": "^2.18.1",
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
   },
@@ -21,7 +22,9 @@
     "eslint-plugin-vue": "^6.2.2",
     "node-sass": "^4.14.1",
     "sass-loader": "^10.0.4",
-    "vue-template-compiler": "^2.6.11"
+    "vue-progress-path": "^0.0.2",
+    "vue-template-compiler": "^2.6.11",
+    "vue-wait": "^1.4.8"
   },
   "eslintConfig": {
     "root": true,
